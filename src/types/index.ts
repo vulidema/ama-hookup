@@ -1,16 +1,9 @@
-export type User = {
-  id: string;
-  email: string;
-  created_at: string;
-};
-
 export type Profile = {
   id: string;
   display_name: string;
   bio: string;
-  age: number;
-  gender: "male" | "female" | "other";
-  role: "member" | "host" | "admin";
+  age: number | null;
+  gender: string | null;
   avatar_url: string | null;
   lat: number | null;
   lng: number | null;
@@ -29,6 +22,8 @@ export type Profile = {
   updated_at: string;
 };
 
+export type UserRole = "member" | "host" | "admin";
+
 export type ChatRequest = {
   id: string;
   member_id: string;
@@ -43,7 +38,7 @@ export type Conversation = {
   id: string;
   member_id: string;
   host_id: string;
-  request_id: string;
+  request_id: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -69,7 +64,7 @@ export type Rating = {
   id: string;
   rater_id: string;
   ratee_id: string;
-  conversation_id: string;
+  conversation_id: string | null;
   rating: number;
   created_at: string;
 };
@@ -80,6 +75,18 @@ export type CreditTransaction = {
   delta: number;
   reason: string;
   created_at: string;
+};
+
+export type PaymentOrder = {
+  id: string;
+  user_id: string;
+  credits: number;
+  price_cents: number;
+  order_code: string;
+  yoco_link: string | null;
+  status: "pending" | "approved" | "rejected";
+  created_at: string;
+  updated_at: string;
 };
 
 export type Report = {

@@ -1,0 +1,70 @@
+"use client";
+
+import React from "react";
+import { useUserInsights, useEngagementMetrics } from "@/hooks/useMonitoring";
+import { AppLayout } from "@/components/layouts";
+import { Card, Badge } from "@/components/ui";
+
+export default function AnalyticsPage() {
+  const { data: insights, isLoading: insightsLoading } = useUserInsights();
+  const { data: engagement, isLoading: engagementLoading } = useEngagementMetrics();
+
+  if (insightsLoading || engagementLoading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-96">
+          <p>Loading analytics...</p>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  return (
+    <AppLayout
+      header={<h1 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>}
+    >
+      <div className="max-w-6xl mx-auto space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="p-5">
+            <p className="text-sm text-gray-600">Daily Active Users</p>
+            <p className="text-3xl font-bold mt-2">{insights?.dau}</p>
+          </Card>
+          <Card className="p-5">
+            <p className="text-sm text-gray-600">Retention</p>
+            <p className="text-3xl font-bold mt-2">{insights?.retention}%</p>
+          </Card>
+          <Card className="p-5">
+            <p className="text-sm text-gray-600">Session Duration</p>
+            <p className="text-3xl font-bold mt-2">{insights?.session_duration}m</p>
+          </Card>
+          <Card className="p-5">
+            <p className="text-sm text-gray-600">Conversion</p>
+            <p className="text-3xl font-bold mt-2">{insights?.conversion}%</p>
+          </Card>
+        </div>
+
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold mb-4">Engagement Summary</h2>
+          <div className="space-y-4">
+            <div className="flex justify-between">
+              <span className="text-gray-600">Messages Sent</span>
+              <span className="font-semibold">{engagement?.messages_sent}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Waves Sent</span>
+              <span className="font-semibold">{engagement?.waves_sent}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Profile Views</span>
+              <span className="font-semibold">{engagement?.profile_views}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Average Match Rate</span>
+              <span className="font-semibold">{engagement?.match_rate}%</span>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </AppLayout>
+  );
+}

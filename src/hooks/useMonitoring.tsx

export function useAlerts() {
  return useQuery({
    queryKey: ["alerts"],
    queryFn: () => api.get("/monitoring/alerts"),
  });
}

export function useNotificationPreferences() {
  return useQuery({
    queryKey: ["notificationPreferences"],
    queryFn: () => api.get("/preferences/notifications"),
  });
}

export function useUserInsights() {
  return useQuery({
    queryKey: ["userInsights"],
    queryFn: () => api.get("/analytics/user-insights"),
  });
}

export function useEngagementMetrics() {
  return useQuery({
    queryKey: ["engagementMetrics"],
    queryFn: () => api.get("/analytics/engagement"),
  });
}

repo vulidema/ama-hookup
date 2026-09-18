@@ -1,0 +1,84 @@
+"use client";
+
+import React from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAlerts, useNotificationPreferences } from "@/hooks/queries";
+import { AppLayout } from "@/components/layouts";
+import { Card, Button, Badge } from "@/components/ui";
+
+export default function MonitoringPage() {
+  const queryClient = useQueryClient();
+  const { data: alerts = [], isLoading } = useAlerts();
+  const { data: preferences } = useNotificationPreferences();
+
+  if (isLoading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-96">
+          <p>Loading monitoring...</p>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  return (
+    <AppLayout
+      header={<h1 className="text-2xl font-bold text-gray-900">Monitoring & Alerts</h1>}
+    >
+      <div className="max-w-6xl mx-auto space-y-6">
+        <Card className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Alert Center</h2>
+            <Button
+              variant="secondary"
+              onClick={() => queryClient.invalidateQueries({ queryKey: ["alerts"] })}
+            >
+              Refresh
+            </Button>
+          </div>
+
+          <div className="space-y-3">
+            {alerts.map((alert) => (
+              <div
+                key={alert.id}
+                className="flex items-center justify-between border border-gray-200 rounded-lg p-4"
+              >
+                <div>
+                  <p className="font-medium text-gray-900">{alert.title}</p>
+                  <p className="text-sm text-gray-600">{alert.message}</p>
+                </div>
+                <Badge variant={alert.severity === "critical" ? "danger" : "warning"}>
+                  {alert.severity}
+                </Badge>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Notification Preferences</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { key: "email", label: "Email Alerts" },
+              { key: "push", label: "Push Notifications" },
+              { key: "sms", label: "SMS Alerts" },
+            ].map((pref) => (
+              <label
+                key={pref.key}
+                className="flex items-center justify-between rounded-lg border border-gray-200 p-4"
+              >
+                <span className="text-gray-700">{pref.label}</span>
+                <input
+                  type="checkbox"
+                  checked={preferences?.[pref.key] ?? false}
+                  readOnly
+                  className="w-4 h-4"
+                />
+              </label>
+            ))}
+          </div>
+        </Card>
+      </div>
+    </AppLayout>
+  );
+}

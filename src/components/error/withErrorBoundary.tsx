@@ -1,0 +1,12 @@
+import React from "react";
+import { ErrorBoundary } from "@/components/error/ErrorBoundary";
+
+export default function withErrorBoundary<P>(Component: React.ComponentType<P>) {
+  return function WrappedComponent(props: P) {
+    return (
+      <ErrorBoundary>
+        <Component {...props} />
+      </ErrorBoundary>
+    );
+  };
+}
